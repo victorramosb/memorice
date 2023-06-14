@@ -30,12 +30,18 @@ export default function App() {
   const [deck, setDeck] = React.useState(/* cardImages */
   [{'id':'1', 'src':'./img/cloud.png'},
    {'id':'2', 'src':'./img/rain.png'},
-   {'id':'3', 'src':'./img/zap.png'},]
+   {'id':'3', 'src':'./img/zap.png'},
+   {'id':'4', 'src':'./img/tree.png'},
+   {'id':'5', 'src':'./img/cloud.png'},
+   {'id':'6', 'src':'./img/rain.png'},
+   {'id':'7', 'src':'./img/zap.png'},
+   {'id':'8', 'src':'./img/tree.png'},]
+
   )
   const [hand, setHand] = React.useState(initialHand)
   const [shuffledCards, setShuffledCards] = React.useState([])
 
-  const {containerStyle,gridStyle,cardStyle, imageStyle} = styles
+  const {containerStyle,buttonContainerStyle,gridStyle,cardStyle, imageStyle} = styles
 
   React.useEffect(() => {
     console.log('deck: ', deck);
@@ -65,26 +71,24 @@ export default function App() {
   
   return (
     <View style={containerStyle}>
-
-      <Button title='SHUFFLE!'
-        onPress={() => shuffleCards()}/>
-
-      <View /* style={gridStyle} */>
+      <View style={buttonContainerStyle}>
+        <Button title='SHUFFLE!' onPress={() => shuffleCards()}/>
+      </View>
+      <View style={gridStyle}>
         {shuffledCards.map(card => { 
           console.log('card: ', card)
           return(
-          <View key={card.id}>
-            {/* <Image style={imageStyle} source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} /> */}
-
-            {/* <Image style={imageStyle} source={require('./img/back.png')}/> */}
-            {/* <Image style={imageStyle} source={{ uri: './img/back.png' }} /> */}
-
-            {/* <Image style={imageStyle} source={{ uri: card.src }} alt={card.src}/> */}
-            {/* <Image style={imageStyle} src={card.src} alt={card.src}/> */}
-            <Text>{card.src}</Text>
-
-
-          </View>
+            <View style={cardStyle} key={card.id}>
+              {/* <Image style={imageStyle} source={{ uri: 'https://reactnative.dev/img/tiny_logo.png' }} /> */}
+              {/* <Image style={imageStyle} source={require('./img/back.png')}/> */}
+              {/* <Image style={imageStyle} source={{ uri: './img/back.png' }} /> */}
+              {/* <Image style={imageStyle} src={card.src} /> */}
+              {/* <Image style={imageStyle} source={require('./img/zap.png')}/> */}
+              
+              <Image style={imageStyle} source={{ uri: card.src }} />
+              <Image style={imageStyle} source={require('./img/back.png')}/>
+              <Text>{card.src}</Text>
+            </View>
         )})}
       </View>
 
@@ -94,18 +98,35 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
-  cardStyle:{},
-  gridStyle:{},
-  imageStyle: {
-    width: 50,
-    height: 50,
-    borderRadius: 75,
-    alignSelf: 'flex-end',
+  cardStyle: {
+    backgroundColor: '#0f0',
+    alignSelf: 'center',
+  },
+  gridStyle: {
+    flex: 4,
+    flexDirection: 'row',
+    width: '80%',
+    backgroundColor: '#0ff',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+  },
+  buttonContainerStyle: {
+    flex: 1,
+    backgroundColor: '#ff0',
+    // alignItems: 'center',
+    justifyContent: 'center',
   },
   containerStyle: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: '#f0f',
     alignItems: 'center',
     justifyContent: 'center',
   },
+  imageStyle: {
+    width: 70,
+    height: 70,
+    borderRadius: 75,
+    backgroundColor: '#f00',
+  },
+
 });
