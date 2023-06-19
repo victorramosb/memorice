@@ -16,31 +16,44 @@ const initialDeck = [
 ];
 
 export default function App() {
-  const [turn, setTurn] = React.useState()
   // const [deck, setDeck] = React.useState(initialDeck) /* cardImages */
   const [deck, setDeck] = React.useState(
-  [{'id':'1', 'src':'../img/cloud.png'},
-   {'id':'2', 'src':'../img/rain.png'},
-   {'id':'3', 'src':'../img/zap.png'},
-   {'id':'4', 'src':'../img/tree.png'},
-   {'id':'5', 'src':'../img/cloud.png'},
-   {'id':'6', 'src':'../img/rain.png'},
-   {'id':'7', 'src':'../img/zap.png'},
-   {'id':'8', 'src':'../img/tree.png'},]
-
+  [{'id':'1', matched: false, 'src':'../img/cloud.png'},
+   {'id':'2', matched: false, 'src':'../img/rain.png'},
+   {'id':'3', matched: false, 'src':'../img/zap.png'},
+   {'id':'4', matched: false, 'src':'../img/tree.png'},
+   {'id':'5', matched: false, 'src':'../img/cloud.png'},
+   {'id':'6', matched: false, 'src':'../img/rain.png'},
+   {'id':'7', matched: false, 'src':'../img/zap.png'},
+   {'id':'8', matched: false, 'src':'../img/tree.png'},]
   )
+
   const [shuffledCards, setShuffledCards] = React.useState([])
+  const [     turn,      setTurn] = React.useState(0)
   const [choiceOne, setChoiceOne] = React.useState(null)
   const [choiceTwo, setChoiceTwo] = React.useState(null)
 
   const { containerStyle, buttonContainerStyle, gridStyle } = styles
 
   React.useEffect(() => {
-    console.log('choiceOne: ', choiceOne);
-    console.log('choiceTwo: ', choiceTwo);
-
-
-  }, [deck, choiceOne, choiceTwo])
+    // console.log('    cards: ', shuffledCards);
+    // console.log('choiceOne: ', choiceOne);
+    // console.log('choiceTwo: ', choiceTwo);
+    if (choiceOne && choiceTwo) {
+      // console.log('SELECTED !!!')
+      if (choiceOne.src === choiceTwo.src) {
+        console.log('MATCH!!!')
+        const auxCards = shuffledCards
+        auxCards[choiceOne.index].matched = true
+        auxCards[choiceTwo.index].matched = true
+        setShuffledCards(auxCards)
+      } else {
+        console.log('NO match :(')
+      }
+      resetTurn()
+    }
+    // console.log('    cards: ', shuffledCards);
+  }, [choiceOne, choiceTwo])
 
   const shuffleCards = () => {
     console.log('/////////////////////////////////////////////////////////')
@@ -60,12 +73,20 @@ export default function App() {
 
     // console.log('        nsCards: ', nsCards)    
     console.log('shuffledCards: ', shuffledCards)
-    setShuffledCards(sCards)
+    // setShuffledCards(sCards)
+    setShuffledCards(deck)
     console.log('shuffledCards: ', shuffledCards)
   }
   
   const handleChoice = (card) => {
+    // console.log('handleChoice');
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
+  }
+
+  const resetTurn = () => {
+    setChoiceOne(null)
+    setChoiceTwo(null)
+    setTurn(turn+1)
   }
 
   return (
@@ -75,10 +96,10 @@ export default function App() {
       </View>
 
       <View style={gridStyle}>
-        {shuffledCards.map(card => {
+        {shuffledCards.map( (card, index)=> {
 
-          console.log('card: ', card)
-          return <SingleCard  key={ card.id } card={ card } handleChoice={ handleChoice }/>
+          // console.log('card: ', card.matched)
+          return <SingleCard  key={ index } card={{ ...card, index:index }} handleChoice={ handleChoice }/>
           
         })}
       </View>
