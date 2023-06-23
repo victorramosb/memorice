@@ -1,6 +1,13 @@
 import { StyleSheet, Text, View, Button, Image, ImageBackground, TouchableOpacity} from 'react-native';
 import * as React from 'react'
 
+const imageDic = {
+  '../img/cloud.png': require('../img/cloud.png'),
+  '../img/rain.png': require('../img/rain.png'),
+  '../img/tree.png': require('../img/tree.png'),
+  '../img/zap.png': require('../img/zap.png'),
+}
+
 export default function SingleCard({ card, handleChoice }) {
   const { cardStyle, imageStyle } = styles
   const { id, src } = card
@@ -22,7 +29,7 @@ export default function SingleCard({ card, handleChoice }) {
       {/* <Image style={ imageStyle} src={ card.src} /> */}
       {/* <Image style={ imageStyle} source={ require('./img/zap.png') }/> */}
 
-      <Image style={ imageStyle } source={{ uri: src }}/>
+      <Image style={ imageStyle } source={ imageDic[src] } />
       <Image style={ imageStyle } source={ require('../img/back.png')  }/>
       {/* <Text>{src}</Text> */}
     </TouchableOpacity>
