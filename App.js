@@ -1,85 +1,73 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View, Button, Image, ImageBackground } from 'react-native';
+import { StatusBar } from 'expo-status-bar'
+import { StyleSheet, Text, View, Button, Image, ImageBackground } from 'react-native'
 import * as React from 'react'
-import SingleCard from './components/Card';
+import SingleCard from './components/Card'
 
-const cardImages = [ // pngtree.com
-  {'id':'1', 'src':'./img/back.png'},
-  {'id':'2', 'src':'./img/rain.png'},
-  {'id':'3', 'src':'./img/zap.png'},
-];
-
-const initialHand = [];
 const initialDeck = [
-  {'n':'0'},{'n':'1'},{'n':'2'},{'n':'3'},{'n':'4'},
-  {'n':'5'},{'n':'6'},{'n':'7'},{'n':'8'},{'n':'9'}
-];
+  { matched: false, src: require('./img/cloud.png')},
+  { matched: false, src: require('./img/rain.png') },
+  { matched: false, src: require('./img/zap.png')  },
+  { matched: false, src: require('./img/tree.png') },
+  { matched: false, src: require('./img/cloud.png')},
+  { matched: false, src: require('./img/rain.png') },
+  { matched: false, src: require('./img/zap.png')  },
+  { matched: false, src: require('./img/tree.png') },
+]
 
 export default function App() {
-  // const [deck, setDeck] = React.useState(initialDeck) /* cardImages */
-  const [deck, setDeck] = React.useState(
-  [{'id':'1', matched: false, 'src':'../img/cloud.png'},
-   {'id':'2', matched: false, 'src':'../img/rain.png'},
-   {'id':'3', matched: false, 'src':'../img/zap.png'},
-   {'id':'4', matched: false, 'src':'../img/tree.png'},
-   {'id':'5', matched: false, 'src':'../img/cloud.png'},
-   {'id':'6', matched: false, 'src':'../img/rain.png'},
-   {'id':'7', matched: false, 'src':'../img/zap.png'},
-   {'id':'8', matched: false, 'src':'../img/tree.png'},]
-  )
-
-  const [shuffledCards, setShuffledCards] = React.useState([])
+  const [     deck,      setDeck] = React.useState([]/* initialDeck */)
   const [     turn,      setTurn] = React.useState(0)
   const [choiceOne, setChoiceOne] = React.useState(null)
   const [choiceTwo, setChoiceTwo] = React.useState(null)
+  const [   winCon,    setWinCon] = React.useState(initialDeck.length)
 
   const { containerStyle, buttonContainerStyle, gridStyle } = styles
 
   React.useEffect(() => {
-    // console.log('    cards: ', shuffledCards);
-    // console.log('choiceOne: ', choiceOne);
-    // console.log('choiceTwo: ', choiceTwo);
+    console.log('/////////////////////////////////////////////////////////')
+    // console.log('turn: ', turn)
+    // console.log('choiceOne: ', choiceOne)
+    
     if (choiceOne && choiceTwo) {
-      // console.log('SELECTED !!!')
+      // console.log('choiceTwo: ', choiceTwo)
       if (choiceOne.src === choiceTwo.src) {
         console.log('MATCH!!!')
-        const auxCards = shuffledCards
+        setWinCon(winCon-2)
+        // console.log('choiceOne.index: ', choiceOne.index)
+        // console.log('choiceTwo.index: ', choiceTwo.index)
+        // console.log('deck: ', deck)
+        const auxCards = deck
         auxCards[choiceOne.index].matched = true
         auxCards[choiceTwo.index].matched = true
-        setShuffledCards(auxCards)
+        setDeck(auxCards)
+        resetTurn()
       } else {
         console.log('NO match :(')
+        setTimeout(() => { resetTurn() }, 1000);
       }
-      resetTurn()
+      
     }
-    // console.log('    cards: ', shuffledCards);
   }, [choiceOne, choiceTwo])
 
   const shuffleCards = () => {
-    console.log('/////////////////////////////////////////////////////////')
-    setShuffledCards([])
+    setTurn(0)
+    setChoiceOne(null)
+    setChoiceTwo(null)
+    setDeck([])
+    setWinCon(initialDeck.length)
     const sCards  = []
     const nsCards = []
-    nsCards.push(...deck)
-    // nsCards.push(...deck, ...deck)
-    // console.log('nsCards: ', nsCards)    
-    // console.log(' sCards: ',  sCards)
-    // console.log('shuffle!!!')
-
+    nsCards.push(...initialDeck)
+    let index = 0
     while (nsCards.length > 0) {
       const num = Math.floor(Math.random() * nsCards.length)
-      sCards.push( nsCards.splice(num,1)[0] )
+      sCards.push({ ...nsCards.splice(num,1)[0] , index })
+      index++
     }
-
-    // console.log('        nsCards: ', nsCards)    
-    console.log('shuffledCards: ', shuffledCards)
-    // setShuffledCards(sCards)
-    setShuffledCards(deck)
-    console.log('shuffledCards: ', shuffledCards)
+    setDeck(sCards)
   }
   
   const handleChoice = (card) => {
-    // console.log('handleChoice');
     choiceOne ? setChoiceTwo(card) : setChoiceOne(card)
   }
 
@@ -89,24 +77,57 @@ export default function App() {
     setTurn(turn+1)
   }
 
+  const renderWin = () => {
+    console.log('winCon: ', winCon);
+    if (winCon===0) return <View><Text>YOU WIN</Text></View>
+  }
+
   return (
     <View style={containerStyle}>
       <View style={buttonContainerStyle}>
         <Button title='NEW GAME!' onPress={() => shuffleCards()}/>
       </View>
 
+      { renderWin() }
+      
       <View style={gridStyle}>
-        {shuffledCards.map( (card, index)=> {
+        {deck.map( (card /* , index */)=> {
+          // console.log('card     : ', card)
+          let flipped = false
+          let block = false
+          if (choiceOne) {
+            if ( card.index===choiceOne.index ) {
+              // console.log('flip!!!!')
+              flipped = true
+            }
+          }
+          if (choiceTwo) {
+            block = true
+            if ( card.index===choiceTwo.index ) {
+              // console.log('flip!!!!')
+              flipped = true
+            }
+          }
+          if (card.matched) {
+            // console.log('flip!!!!')
+            flipped = true
+          }
 
-          // console.log('card: ', card.matched)
-          return <SingleCard  key={ index } card={{ ...card, index:index }} handleChoice={ handleChoice }/>
+          return <SingleCard
+            key={ card.index }
+            handleChoice={ handleChoice }
+            card={{ ...card, flipped }}
+            block={ block }
+          />
           
         })}
       </View>
 
+      
+
       <StatusBar style='auto' />
     </View>
-  );
+  )
 }
 
 const styles = StyleSheet.create({
@@ -130,4 +151,4 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-});
+})
